@@ -30,11 +30,18 @@ class Treap
 private:
 	Treap_Node *root;
 	unordered_set<int> all_used_priorities;
-	int max_priority = 1000000;
+	int max_priority;
+	int number_of_rotations_during_insertion;
+	int number_of_rotations_during_deletion;
+	int number_of_comparisons_during_insertion;
+	int number_of_comparisons_during_deletion;
+
 	void RotateR(Treap_Node *&ptr);
 	void RotateL(Treap_Node *&ptr);
 	void Treap_PrintHelper(const Treap_Node *node, ofstream &fout);
 	void destructorHelper(Treap_Node *treap_node);
+	long int Treap_Average_Height_Of_Nodes_Helper(Treap_Node *node, long int &total_height, double &number_of_nodes);
+	int Treap_Height_Helper(Treap_Node *node);
 
 public:
 	Treap();
@@ -43,6 +50,8 @@ public:
 	void Treap_Insert(int k);
 	void Treap_Delete(int k);
 	bool Treap_Search(int k);
+	double Treap_Average_Height_Of_Nodes();
+	int Treap_Height();
 	void Treap_Print(const char *filename);
 	~Treap();
 };
@@ -52,6 +61,11 @@ public:
 Treap::Treap()
 {
 	all_used_priorities.clear();
+	max_priority = 1000000;
+	number_of_comparisons_during_deletion = 0;
+	number_of_comparisons_during_insertion = 0;
+	number_of_rotations_during_deletion = 0;
+	number_of_rotations_during_insertion = 0;
 	root = NULL;
 }
 
@@ -60,6 +74,11 @@ Treap::Treap()
 Treap::Treap(int k)
 {
 	all_used_priorities.clear();
+	max_priority = 1000000;
+	number_of_comparisons_during_deletion = 0;
+	number_of_comparisons_during_insertion = 0;
+	number_of_rotations_during_deletion = 0;
+	number_of_rotations_during_insertion = 0;
 	int p = ((rand() % max_priority) + max_priority) % max_priority;
 	root = new Treap_Node(k, p);
 	all_used_priorities.insert(p);
@@ -103,6 +122,7 @@ void Treap::Treap_Insert(int k)
 
 	while (node)
 	{
+		number_of_comparisons_during_insertion++;
 		if (k == node->key)
 			return;
 
@@ -138,6 +158,7 @@ void Treap::Treap_Insert(int k)
 		st.pop();
 		if (node->LChild && node->priority > node->LChild->priority)
 		{
+			number_of_rotations_during_insertion++;
 			RotateR(node);
 			if (st.empty())
 			{
@@ -153,6 +174,7 @@ void Treap::Treap_Insert(int k)
 		}
 		else if (node->RChild && node->priority > node->RChild->priority)
 		{
+			number_of_rotations_during_insertion++;
 			RotateL(node);
 			if (st.empty())
 			{
@@ -183,23 +205,28 @@ void Treap::Treap_Delete(int k)
 		{
 			if (root->LChild->priority < root->RChild->priority)
 			{
+				number_of_rotations_during_deletion++;
 				RotateR(root);
 			}
 			else
 			{
+				number_of_rotations_during_deletion++;
 				RotateL(root);
 			}
 		}
 		else if (root->LChild)
 		{
+			number_of_rotations_during_deletion++;
 			RotateR(root);
 		}
 		else if (root->RChild)
 		{
+			number_of_rotations_during_deletion++;
 			RotateL(root);
 		}
 		else
 		{
+			number_of_comparisons_during_deletion++;
 			delete (root);
 			root = NULL;
 			return;
@@ -211,6 +238,7 @@ void Treap::Treap_Delete(int k)
 
 	while (node)
 	{
+		number_of_comparisons_during_deletion++;
 		if (k == node->key)
 			break;
 
@@ -237,6 +265,7 @@ void Treap::Treap_Delete(int k)
 		{
 			if (node->LChild->priority < node->RChild->priority)
 			{
+				number_of_rotations_during_deletion++;
 				RotateR(node);
 				if (node->key < parent->key)
 					parent->LChild = node;
@@ -247,6 +276,7 @@ void Treap::Treap_Delete(int k)
 			}
 			else
 			{
+				number_of_rotations_during_deletion++;
 				RotateL(node);
 				if (node->key < parent->key)
 					parent->LChild = node;
@@ -258,6 +288,7 @@ void Treap::Treap_Delete(int k)
 		}
 		if (node->LChild)
 		{
+			number_of_rotations_during_deletion++;
 			RotateR(node);
 			if (node->key < parent->key)
 				parent->LChild = node;
@@ -268,6 +299,7 @@ void Treap::Treap_Delete(int k)
 		}
 		else
 		{
+			number_of_rotations_during_deletion++;
 			RotateL(node);
 			if (node->key < parent->key)
 				parent->LChild = node;
@@ -387,6 +419,48 @@ void Treap::destructorHelper(Treap_Node *treap_node)
 		destructorHelper(treap_node->RChild);
 
 	delete (treap_node); // deallocate memory for node
+}
+
+//========================================================================================================================
+
+int Treap::Treap_Height()
+{
+	return Treap_Height_Helper(root);
+}
+
+//========================================================================================================================
+
+int Treap::Treap_Height_Helper(Treap_Node *node)
+{
+	if (!node)
+		return 0;
+	return 1 + max(Treap_Height_Helper(node->LChild), Treap_Height_Helper(node->RChild));
+}
+
+//========================================================================================================================
+
+double Treap::Treap_Average_Height_Of_Nodes()
+{
+	long int h = 0;
+	int c = 1;
+	double number_of_nodes = 0;
+	Treap_Average_Height_Of_Nodes_Helper(root, h, number_of_nodes);
+	return h / number_of_nodes;
+}
+
+//========================================================================================================================
+
+long int Treap::Treap_Average_Height_Of_Nodes_Helper(Treap_Node *node, long int &total_height, double &number_of_nodes)
+{
+	if (!node)
+		return 0;
+	++number_of_nodes;
+	long int lh = Treap_Average_Height_Of_Nodes_Helper(node->LChild, total_height, number_of_nodes);
+	long int rh = Treap_Average_Height_Of_Nodes_Helper(node->RChild, total_height, number_of_nodes);
+
+	int h = max(lh, rh) + 1;
+	total_height += h;
+	return h;
 }
 
 //========================================================================================================================
