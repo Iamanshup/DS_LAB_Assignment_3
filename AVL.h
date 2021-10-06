@@ -61,6 +61,10 @@ public:
   void AVL_Print(const char *filename);
   double AVL_Average_Height_Of_Nodes();
   int AVL_Height();
+  int get_number_of_rotations_during_insertion();
+  int get_number_of_rotations_during_deletion();
+  int get_number_of_comparisons_during_insertion();
+  int get_number_of_comparisons_during_deletion();
   ~AVL_Tree();
 };
 
@@ -235,10 +239,8 @@ void AVL_Tree::AVL_Insert(int k)
         break;
       }
     }
-    else // k is already present in the tree
-    {
-      throw "Element already exists.";
-    }
+    else
+      return;
 
     if (q->bf != 0) // if q can be the balance point, update s and t
     {
@@ -452,10 +454,10 @@ bool AVL_Tree::AVL_Search(int k)
 // from the AVL tree
 void AVL_Tree::AVL_Delete(int k)
 {
-  if (!AVL_Search(k)) // if k is not present in the tree
-  {
-    throw "Key does not exist in the tree.";
-  }
+  // if (!AVL_Search(k)) // if k is not present in the tree
+  // {
+  //   throw "Key does not exist in the tree.";
+  // }
 
   AVL_Node *pr = NULL;
   AVL_Node *p = root->RChild, *q;
@@ -476,6 +478,9 @@ void AVL_Tree::AVL_Delete(int k)
     else // k is in right subtree
       p = p->RChild;
   }
+
+  if (!p)
+    return;
 
   // if p has both children (left and right)
   if (p->LChild != NULL && p->RChild != NULL)
@@ -679,3 +684,8 @@ long int AVL_Tree::AVL_Average_Height_Of_Nodes_Helper(AVL_Node *node, long int &
 }
 
 //========================================================================================================================
+
+int AVL_Tree::get_number_of_rotations_during_insertion() { return number_of_rotations_during_insertion; }
+int AVL_Tree::get_number_of_rotations_during_deletion() { return number_of_rotations_during_deletion; }
+int AVL_Tree::get_number_of_comparisons_during_insertion() { return number_of_comparisons_during_insertion; }
+int AVL_Tree::get_number_of_comparisons_during_deletion() { return number_of_comparisons_during_deletion; }

@@ -53,6 +53,10 @@ public:
 	double Treap_Average_Height_Of_Nodes();
 	int Treap_Height();
 	void Treap_Print(const char *filename);
+	int get_number_of_rotations_during_insertion();
+	int get_number_of_rotations_during_deletion();
+	int get_number_of_comparisons_during_insertion();
+	int get_number_of_comparisons_during_deletion();
 	~Treap();
 };
 
@@ -464,3 +468,8 @@ long int Treap::Treap_Average_Height_Of_Nodes_Helper(Treap_Node *node, long int 
 }
 
 //========================================================================================================================
+
+int Treap::get_number_of_rotations_during_insertion() { return number_of_rotations_during_insertion; }
+int Treap::get_number_of_rotations_during_deletion() { return number_of_rotations_during_deletion; }
+int Treap::get_number_of_comparisons_during_insertion() { return number_of_comparisons_during_insertion; }
+int Treap::get_number_of_comparisons_during_deletion() { return number_of_comparisons_during_deletion; }
