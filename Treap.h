@@ -175,6 +175,8 @@ void Treap::Treap_Insert(int k)
 
 void Treap::Treap_Delete(int k)
 {
+	if (!root)
+		return;
 	if (k == root->key)
 	{
 		if (root->LChild && root->RChild)
