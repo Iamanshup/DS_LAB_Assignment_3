@@ -22,7 +22,7 @@ int main()
 		int num;
 		string filename;
 		cout << "MENU:\n";
-		cout << "1. Insert(x)\n2. Search(x)\n3. Delete(x)\n4. Print Treap\n5. Exit\n";
+		cout << "1. Insert(x)\n2. Search(x)\n3. Delete(x)\n4. Height of Treap\n5. Average Height of Nodes\n6. Print Treap\n7. Exit\n";
 		cout << "Enter your choice: ";
 		cin >> c;
 		switch (c)
@@ -51,6 +51,14 @@ int main()
 			break;
 
 		case 4:
+			cout << "Height of Treap: " << treap->Treap_Height() << "\n";
+			break;
+
+		case 5:
+			cout << "Average Height of Nodes: " << treap->Treap_Average_Height_Of_Nodes() << "\n";
+			break;
+
+		case 6:
 			try
 			{
 				cout << "Enter filename(without extension): ";
@@ -63,7 +71,7 @@ int main()
 			}
 			break;
 
-		case 5:
+		case 7:
 			c = -1;
 			break;
 
