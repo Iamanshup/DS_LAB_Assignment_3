@@ -62,6 +62,7 @@ public:
 
 //========================================================================================================================
 
+// constructor
 Treap::Treap()
 {
 	all_used_priorities.clear();
@@ -75,6 +76,7 @@ Treap::Treap()
 
 //========================================================================================================================
 
+// parameterized constructor
 Treap::Treap(int k)
 {
 	all_used_priorities.clear();
@@ -90,6 +92,7 @@ Treap::Treap(int k)
 
 //========================================================================================================================
 
+// rotate to right
 void Treap::RotateR(Treap_Node *&ptr)
 {
 	Treap_Node *subR = ptr;
@@ -100,6 +103,7 @@ void Treap::RotateR(Treap_Node *&ptr)
 
 //========================================================================================================================
 
+// rotate to left
 void Treap::RotateL(Treap_Node *&ptr)
 {
 	Treap_Node *subL = ptr;
@@ -110,8 +114,10 @@ void Treap::RotateL(Treap_Node *&ptr)
 
 //========================================================================================================================
 
+// function to insert a new node
 void Treap::Treap_Insert(int k)
 {
+	// the tree is empty
 	if (!root)
 	{
 		int p = ((rand() % max_priority) + max_priority) % max_priority;
@@ -124,13 +130,14 @@ void Treap::Treap_Insert(int k)
 	Treap_Node *node = root;
 	Treap_Node *parent = NULL;
 
+	// traverse the treap
 	while (node)
 	{
 		number_of_comparisons_during_insertion++;
-		if (k == node->key)
+		if (k == node->key) // if node with key = k is found
 			return;
 
-		st.push(node); // check using valgrind for memory leaks, if found then clear stack
+		st.push(node);
 		parent = node;
 		if (k < node->key)
 		{
@@ -142,20 +149,24 @@ void Treap::Treap_Insert(int k)
 		}
 	}
 
+	// get a new unique priority
 	int p = ((rand() % max_priority) + max_priority) % max_priority;
 	while (all_used_priorities.find(p) != all_used_priorities.end())
 	{
 		p = ((rand() % max_priority) + max_priority) % max_priority;
 	}
 
+	// create a new node
 	Treap_Node *new_node = new Treap_Node(k, p);
 	all_used_priorities.insert(p);
 
+	// insert the node in the treap
 	if (k < parent->key)
 		parent->LChild = new_node;
 	else
 		parent->RChild = new_node;
 
+	// maintain heap property by using rotations
 	while (!st.empty())
 	{
 		node = st.top();
@@ -199,12 +210,17 @@ void Treap::Treap_Insert(int k)
 
 //========================================================================================================================
 
+// function to delete a node
 void Treap::Treap_Delete(int k)
 {
+	// if treap is empty
 	if (!root)
 		return;
+
+	// root is to be deleted
 	if (k == root->key)
 	{
+		// if both children are present
 		if (root->LChild && root->RChild)
 		{
 			if (root->LChild->priority < root->RChild->priority)
@@ -218,17 +234,17 @@ void Treap::Treap_Delete(int k)
 				RotateL(root);
 			}
 		}
-		else if (root->LChild)
+		else if (root->LChild) // only left child is present
 		{
 			number_of_rotations_during_deletion++;
 			RotateR(root);
 		}
-		else if (root->RChild)
+		else if (root->RChild) // only right child is present
 		{
 			number_of_rotations_during_deletion++;
 			RotateL(root);
 		}
-		else
+		else // root is the only node in the treap
 		{
 			number_of_comparisons_during_deletion++;
 			delete (root);
@@ -240,6 +256,7 @@ void Treap::Treap_Delete(int k)
 	Treap_Node *node = root;
 	Treap_Node *parent = NULL;
 
+	// traverse to the node to be deleted
 	while (node)
 	{
 		number_of_comparisons_during_deletion++;
@@ -257,12 +274,13 @@ void Treap::Treap_Delete(int k)
 		}
 	}
 
-	if (!node)
+	if (!node) // node with key = k is nt present in the treap
 		return;
 
 	all_used_priorities.erase(node->priority);
-	node->priority = INT_MAX;
+	node->priority = INT_MAX; // update the priority of node to be deleted
 
+	// use rotations to make the node to be deleted a leaf
 	if (node->LChild || node->RChild)
 	{
 		while (node->LChild && node->RChild)
@@ -323,14 +341,15 @@ void Treap::Treap_Delete(int k)
 
 //========================================================================================================================
 
+// function to search a key in the treap
 bool Treap::Treap_Search(int k)
 {
 	Treap_Node *node = root;
 	while (node)
 	{
-		if (k == node->key)
+		if (k == node->key) // if key found
 			return true;
-		if (k < node->key)
+		if (k < node->key) // if key is in left subtree
 			node = node->LChild;
 		else
 			node = node->RChild;
@@ -403,6 +422,7 @@ void Treap::Treap_PrintHelper(const Treap_Node *node, ofstream &fout)
 
 //========================================================================================================================
 
+// destructor function
 Treap::~Treap()
 {
 	destructorHelper(root);
@@ -427,6 +447,7 @@ void Treap::destructorHelper(Treap_Node *treap_node)
 
 //========================================================================================================================
 
+// function to find the height of the treap
 int Treap::Treap_Height()
 {
 	return Treap_Height_Helper(root);
@@ -434,6 +455,7 @@ int Treap::Treap_Height()
 
 //========================================================================================================================
 
+// function to return the height of a subtree
 int Treap::Treap_Height_Helper(Treap_Node *node)
 {
 	if (!node)
@@ -443,6 +465,7 @@ int Treap::Treap_Height_Helper(Treap_Node *node)
 
 //========================================================================================================================
 
+// function to find the average height of nodes in the treap
 double Treap::Treap_Average_Height_Of_Nodes()
 {
 	long int h = 0;
@@ -454,6 +477,7 @@ double Treap::Treap_Average_Height_Of_Nodes()
 
 //========================================================================================================================
 
+// function to find the sum of height of nodes in the treap
 long int Treap::Treap_Average_Height_Of_Nodes_Helper(Treap_Node *node, long int &total_height, double &number_of_nodes)
 {
 	if (!node)
@@ -469,7 +493,10 @@ long int Treap::Treap_Average_Height_Of_Nodes_Helper(Treap_Node *node, long int 
 
 //========================================================================================================================
 
+// getter functions
 int Treap::get_number_of_rotations_during_insertion() { return number_of_rotations_during_insertion; }
 int Treap::get_number_of_rotations_during_deletion() { return number_of_rotations_during_deletion; }
 int Treap::get_number_of_comparisons_during_insertion() { return number_of_comparisons_during_insertion; }
 int Treap::get_number_of_comparisons_during_deletion() { return number_of_comparisons_during_deletion; }
+
+//========================================================================================================================
