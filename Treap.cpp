@@ -8,13 +8,6 @@ int main()
 	srand(time(0));
 	Treap *treap = new Treap();
 
-	// for (int i = 1; i <= 10; i++)
-	// {
-	//   treap->Treap_Insert(i);
-	// }
-
-	// treap->Treap_Print("test");
-
 	int c = 0;
 
 	while (c != -1)
@@ -30,24 +23,38 @@ int main()
 		case 1:
 			cout << "Enter a number: ";
 			cin >> num;
-			treap->Treap_Insert(num);
-			cout << "Key inserted successfully!\n";
+			if (treap->Treap_Search(num))
+			{
+				cout << "Key is already present in the Treap.\n";
+			}
+			else
+			{
+				treap->Treap_Insert(num);
+				cout << "Key inserted successfully!\n";
+			}
 			break;
 
 		case 2:
 			cout << "Enter a number: ";
 			cin >> num;
 			if (treap->Treap_Search(num))
-				cout << "Number is present in Treap.\n";
+				cout << "Key is present in Treap.\n";
 			else
-				cout << "Number is not present in Treap.\n";
+				cout << "Key is not present in Treap.\n";
 			break;
 
 		case 3:
 			cout << "Enter a number: ";
 			cin >> num;
-			treap->Treap_Delete(num);
-			cout << "Key deleted successfully!\n";
+			if (!treap->Treap_Search(num))
+			{
+				cout << "Key is not present in the Treap.\n";
+			}
+			else
+			{
+				treap->Treap_Delete(num);
+				cout << "Key deleted successfully!\n";
+			}
 			break;
 
 		case 4:
