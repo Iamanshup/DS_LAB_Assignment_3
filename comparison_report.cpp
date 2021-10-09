@@ -25,14 +25,7 @@ int main()
     int number_of_operations;
     cin >> number_of_operations;
 
-    // cout << number_of_operations << endl;
-
     int number_of_insertions = 0, number_of_deletions = 0;
-
-    // string s;
-    // int num;
-    // cin >> s >> num;
-    // cout << s << " " << num << endl;
 
     for (int i = 0; i < number_of_operations; i++)
     {
