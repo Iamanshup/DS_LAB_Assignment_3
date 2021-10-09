@@ -13,7 +13,7 @@ int main()
   for (int i = 0; i < number_of_test_files; i++)
   {
     string file_name = "test_case_";
-    file_name += to_string(i);
+    file_name += ('0' + i);
     file_name += ".txt";
 
     freopen(file_name.c_str(), "r", stdin);
